@@ -1,4 +1,4 @@
-package com.codingbuffalo.aerialdream.util;
+package com.benjy3gg.giphydream.util;
 
 import java.io.File;
 

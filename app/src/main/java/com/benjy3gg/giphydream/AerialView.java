@@ -1,4 +1,4 @@
-package com.codingbuffalo.aerialdream;
+package com.benjy3gg.giphydream;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,15 +15,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.codingbuffalo.aerialdream.service.AerialVideo;
-import com.codingbuffalo.aerialdream.service.VideoService;
-import com.codingbuffalo.aerialdream.util.DownloadManager;
-import com.codingbuffalo.aerialdream.util.SimpleCallback;
+import com.benjy3gg.giphydream.service.AerialVideo;
+import com.benjy3gg.giphydream.service.VideoService;
+import com.benjy3gg.giphydream.util.DownloadManager;
+import com.benjy3gg.giphydream.util.SimpleCallback;
 
 import java.io.File;
-import java.sql.Array;
-import java.sql.Time;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,8 +31,6 @@ import java.util.Random;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
-import static android.content.Context.*;
 
 public class AerialView extends PercentRelativeLayout implements retrofit.Callback<List<AerialVideo>>, SimplePlayer.PlayerListener {
 	private static final int FADE_DURATION = 5000;
@@ -128,8 +123,9 @@ public class AerialView extends PercentRelativeLayout implements retrofit.Callba
 	/* Retrofit.Callback */
 	@Override
 	public void success(List<AerialVideo> aerialVideos, Response response) {
+		Log.d("Giphy", response + " " + aerialVideos);
 		mAerialVideos = aerialVideos;
-		startPlayingVideos();
+		//startPlayingVideos();
 	}
 	
 	@Override

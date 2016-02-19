@@ -1,4 +1,4 @@
-package com.codingbuffalo.aerialdream.service;
+package com.benjy3gg.giphydream.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

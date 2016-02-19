@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-	package="com.codingbuffalo.aerialdream"
+	package="com.benjy3gg.giphydream"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	
 	<uses-permission android:name="android.permission.INTERNET"/>
@@ -31,10 +31,10 @@
 			<!--</intent-filter>-->
 		<!--</activity>-->
 		
-		<activity android:name=".SettingsActivity"/>
+		<activity android:name="com.benjy3gg.giphydream.SettingsActivity"/>
 		
 		<service
-			android:name=".AerialDream"
+			android:name="com.benjy3gg.giphydream.AerialDream"
 			android:exported="true"
 			android:label="@string/daydream_name"
 			android:permission="android.permission.BIND_DREAM_SERVICE">

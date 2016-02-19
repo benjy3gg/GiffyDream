@@ -1,4 +1,4 @@
-package com.codingbuffalo.aerialdream;
+package com.benjy3gg.giphydream;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;

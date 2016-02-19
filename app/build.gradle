@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.codingbuffalo.aerialdream"
+        applicationId "com.benjy3gg.giphydream"
         minSdkVersion 17
         targetSdkVersion 23
         versionCode 4

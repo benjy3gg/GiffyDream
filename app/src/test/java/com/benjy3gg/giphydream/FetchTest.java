@@ -1,7 +1,7 @@
-package com.codingbuffalo.aerialdream;
+package com.benjy3gg.giphydream;
 
-import com.codingbuffalo.aerialdream.service.AerialVideo;
-import com.codingbuffalo.aerialdream.service.VideoService;
+import com.codingbuffalo.giphydream.service.AerialVideo;
+import com.codingbuffalo.giphydream.service.VideoService;
 
 import junit.framework.Assert;
 

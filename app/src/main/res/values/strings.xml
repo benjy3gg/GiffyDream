@@ -1,5 +1,5 @@
 <resources>
-	<string name="daydream_name">Aerial Dream</string>
-	<string name="loading_aerial">Loading Aerial…</string>
+	<string name="daydream_name">Giphy Dream</string>
+	<string name="loading_aerial">Loading Giphy…</string>
 	<string name="show_location">Show location</string>
 </resources>

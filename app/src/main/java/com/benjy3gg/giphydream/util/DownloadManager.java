@@ -1,9 +1,9 @@
-package com.codingbuffalo.aerialdream.util;
+package com.benjy3gg.giphydream.util;
 
 import android.os.Handler;
 import android.support.annotation.UiThread;
 
-import com.codingbuffalo.aerialdream.service.AerialVideo;
+import com.benjy3gg.giphydream.service.AerialVideo;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;

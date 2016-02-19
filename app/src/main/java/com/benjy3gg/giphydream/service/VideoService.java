@@ -1,4 +1,4 @@
-package com.codingbuffalo.aerialdream.service;
+package com.benjy3gg.giphydream.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +14,7 @@ import retrofit.converter.JacksonConverter;
 import retrofit.http.GET;
 
 public class VideoService {
-	private final static String ENDPOINT = "http://a1.phobos.apple.com/us/r1000/000/Features/atv/AutumnResources/videos";
+	private final static String ENDPOINT = "api.giphy.com?api_key=dc6zaTOxFJmzC";
 	
 	private static AppleService createService() {
 		return new RestAdapter.Builder()
@@ -52,10 +52,10 @@ public class VideoService {
 	}
 	
 	private interface AppleService {
-		@GET("/entries.json")
+		@GET("/v1/gifs/trending")
 		List<Wrapper> fetchWrappers();
 		
-		@GET("/entries.json")
+		@GET("/v1/gifs/trending")
 		void fetchWrappers(Callback<List<Wrapper>> callback);
 	}
 	
