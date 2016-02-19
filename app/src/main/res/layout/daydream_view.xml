@@ -30,6 +30,26 @@
 		android:background="#000"
 		android:text="@string/loading_aerial"
 		android:textColor="#fff"
-		android:textSize="30sp"/>
+		android:textSize="30sp"
+		android:alpha="1.5"/>
+
+	<ProgressBar
+        android:id="@+id/progress"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:progress="0"
+        app:layout_marginTopPercent="99%"
+        app:layout_marginLeftPercent="0%"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"/>
+
+	<TextView
+		android:id="@+id/location_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize="24sp"
+		android:fontFamily="sans-serif-thin"
+		android:alpha="0.5"
+		app:layout_marginTopPercent="93%"
+		app:layout_marginLeftPercent="5%" />
 
 </android.support.percent.PercentRelativeLayout>

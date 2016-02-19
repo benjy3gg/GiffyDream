@@ -3,6 +3,7 @@ package com.codingbuffalo.aerialdream.util;
 import android.os.Handler;
 import android.support.annotation.UiThread;
 
+import com.codingbuffalo.aerialdream.service.AerialVideo;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -22,27 +23,30 @@ public class DownloadManager {
 	
 	private ExecutorService mExecutorService;
 	private Handler         mHandler;
-	
+	private long totalLength;
+
 	@UiThread
 	public DownloadManager(int threadCount) {
 		mExecutorService = Executors.newFixedThreadPool(threadCount);
 		mHandler = new Handler();
 	}
 	
-	public void download(final String url, final String path, final Callback callback) {
+	public void download(final AerialVideo video, final String path, final Callback callback) {
 		mExecutorService.execute(new Runnable() {
 			@Override
 			public void run() {
-				downloadFile(url, path, callback);
+				downloadFile(video, path, callback);
 			}
 		});
 	}
 	
-	private void downloadFile(String url, String path, Callback callback) {
+	private void downloadFile(AerialVideo video, String path, Callback callback) {
 		try {
 			File downloadDir = new File(path);
 			downloadDir.mkdirs();
-			
+
+			String url = video.getUrl();
+
 			// Naively read filename from url
 			String filename = url.substring(url.lastIndexOf('/') + 1);
 			
@@ -56,7 +60,7 @@ public class DownloadManager {
 			
 			BufferedSink sink = Okio.buffer(Okio.sink(file));
 			
-			long totalLength = response.body().contentLength();
+			totalLength = response.body().contentLength();
 			notifyStarted(callback, totalLength);
 			
 			long downloadedLength = 0;

@@ -1,9 +1,12 @@
 package com.codingbuffalo.aerialdream;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.service.dreams.DreamService;
 
 public class AerialDream extends DreamService {
 	private AerialView mAerialView;
+	private SharedPreferences mSharedPrefs;
 	
 	@Override
 	public void onAttachedToWindow() {
@@ -12,6 +15,7 @@ public class AerialDream extends DreamService {
 		setContentView(R.layout.daydream);
 		
 		mAerialView = (AerialView) findViewById(R.id.aerial);
+		mAerialView.setSharedPrefs(getSharedPreferences(getPackageName(), Context.MODE_PRIVATE));
 	}
 	
 	/* DreamService */
