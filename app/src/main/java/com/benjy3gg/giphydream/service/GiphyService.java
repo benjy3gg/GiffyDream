@@ -18,7 +18,17 @@ public class GiphyService {
     public interface Service {
         @GET("/v1/gifs/trending")
         Call<GiphyResponse> getTrending(
-                @Query("api_key") String apiKey
+                @Query("api_key") String apiKey,
+                @Query("limit") String limit
+        );
+
+        @GET("/v1/gifs/search")
+        Call<GiphyResponse> getCats(
+                @Query("api_key") String apiKey,
+                @Query("q") String query,
+                @Query("limit") String limit,
+                @Query("offset") String offset
+
         );
     }
     
@@ -32,7 +42,11 @@ public class GiphyService {
                 .create(Service.class);
     }
 
-    public Call<GiphyResponse> trendingGifs() {
-        return service.getTrending(Constants.GIPHY_KEY);
+    public Call<GiphyResponse> trendingGifs(int limit) {
+        return service.getTrending(Constants.GIPHY_KEY, Integer.toString(limit));
+    }
+
+    public Call<GiphyResponse> catGifs(int limit, int offset) {
+        return service.getCats(Constants.GIPHY_KEY, "cats", Integer.toString(limit), Integer.toString(offset));
     }
 }

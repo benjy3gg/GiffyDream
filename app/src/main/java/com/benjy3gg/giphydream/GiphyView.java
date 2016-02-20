@@ -79,6 +79,7 @@ public class GiphyView extends PercentRelativeLayout {
     private TextView mSlugText;
     private int mCurrentLoop;
     private int mMinLoop = 2;
+    private int mNumGifsToGet = 15;
 
     public GiphyView(Context context) {
         super(context);
@@ -124,23 +125,7 @@ public class GiphyView extends PercentRelativeLayout {
 
         downloader = new GifDownloader();
 
-        GiphyService service = new GiphyService();
-        Call<GiphyResponse> call = service.trendingGifs();
-
-        call.enqueue(new Callback<GiphyResponse>() {
-            @Override
-            public void onResponse(Call<GiphyResponse> call, Response<GiphyResponse> response) {
-                mResponse = response.body();
-                Log.e("Giphy-Response", mResponse.getData() + "");
-                mGifData = mResponse.getData();
-                gifDataTODrawables();
-            }
-
-            @Override
-            public void onFailure(Call<GiphyResponse> call, Throwable t) {
-                Log.e("Giphy-Failure", t.getCause() + " " + t.getStackTrace());
-            }
-        });
+        loadNewTrending(0);
 
         try {
             mCurrentDrawable = new GifDrawable(getResources(), R.drawable.api_giphy_header);
@@ -148,7 +133,8 @@ public class GiphyView extends PercentRelativeLayout {
             mSlugText.setText(mCurrentSlug);
             mGifView1.setImageDrawable(mCurrentDrawable);
             mCurrentDrawable.start();
-            mCurrentDrawable.addAnimationListener(new AnimationListener() {
+            addListener(mCurrentDrawable);
+            /*mCurrentDrawable.addAnimationListener(new AnimationListener() {
                 @Override
                 public void onAnimationCompleted(int loopNumber) {
                     Log.d("AnimationCompleted", loopNumber + " times already!");
@@ -172,15 +158,35 @@ public class GiphyView extends PercentRelativeLayout {
                     }
                     mCurrentLoop++;
                 }
-            });
+            });*/
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public void loadNewTrending(int offset) {
+        GiphyService service = new GiphyService();
+        Call<GiphyResponse> call = service.catGifs(mNumGifsToGet, offset);
+
+        call.enqueue(new Callback<GiphyResponse>() {
+            @Override
+            public void onResponse(Call<GiphyResponse> call, Response<GiphyResponse> response) {
+                mResponse = response.body();
+                Log.e("Giphy-Response", mResponse.getData() + "");
+                mGifData = mResponse.getData();
+                gifDataTODrawables();
+            }
+
+            @Override
+            public void onFailure(Call<GiphyResponse> call, Throwable t) {
+                Log.e("Giphy-Failure", t.getCause() + " " + t.getStackTrace());
+            }
+        });
+    }
+
     public void gifDataTODrawables() {
         for(Gif g: mGifData) {
-            if(g.images.fixed_height.size <= 2000000) {
+            if(g.images.fixed_height.size <= 2500000) {
                 mSafeGifs.add(g);
             }
 
@@ -188,8 +194,10 @@ public class GiphyView extends PercentRelativeLayout {
     }
 
     public void downloadNextGif() {
-        if(mIndex >= mSafeGifs.size()) {
+        Log.d("mSafeGifs", "We have " + mSafeGifs.size() + " GIFS in queue");
+        if(mIndex >= mSafeGifs.size()-1) {
             mIndex = 0;
+            //loadNewTrending(mNumGifsToGet);
             //get new trending urlarray?
         }
         String gifUrl = mSafeGifs.get(mIndex).images.fixed_height.url;
@@ -279,9 +287,18 @@ public class GiphyView extends PercentRelativeLayout {
 
     }
 
+    public void animateView() {
+
+    }
+
     public void stop() {
-        mNextDrawable.stop();
-        mCurrentDrawable.stop();
+        if(mNextDrawable != null) {
+            mNextDrawable.stop();
+        }
+
+        if(mNextDrawable != null) {
+            mCurrentDrawable.stop();
+        }
     }
 
     public class Tuple<X,Y> {
