@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.service.dreams.DreamService;
 
 public class GiphyDream extends DreamService {
-	private AerialView mAerialView;
+	private GiphyView mGiphyView;
 	private SharedPreferences mSharedPrefs;
 	
 	@Override
@@ -14,8 +14,8 @@ public class GiphyDream extends DreamService {
 		setFullscreen(true);
 		setContentView(R.layout.daydream);
 		
-		mAerialView = (AerialView) findViewById(R.id.aerial);
-		mAerialView.setSharedPrefs(getSharedPreferences(getPackageName(), Context.MODE_PRIVATE));
+		mGiphyView = (GiphyView) findViewById(R.id.aerial);
+		mGiphyView.setSharedPrefs(getSharedPreferences(getPackageName(), Context.MODE_PRIVATE));
 	}
 	
 	/* DreamService */
@@ -30,7 +30,8 @@ public class GiphyDream extends DreamService {
 	}
 	
 	public void onDreamingStopped() {
-		mAerialView.stop();
+		mGiphyView.stop();
+
 		
 		super.onDreamingStopped();
 	}

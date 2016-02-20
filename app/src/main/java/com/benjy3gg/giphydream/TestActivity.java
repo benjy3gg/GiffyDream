@@ -4,19 +4,19 @@ import android.app.Activity;
 import android.os.Bundle;
 
 public class TestActivity extends Activity {
-	private AerialView mAerialView;
+	private GiphyView mGiphyView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.daydream);
 		
-		mAerialView = (AerialView) findViewById(R.id.aerial);
+		mGiphyView = (GiphyView) findViewById(R.id.aerial);
 	}
 	
 	@Override
 	protected void onStop() {
-		mAerialView.stop();
+		mGiphyView.stop();
 		
 		super.onStop();
 	}

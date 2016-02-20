@@ -34,7 +34,7 @@
 		<activity android:name="com.benjy3gg.giphydream.SettingsActivity"/>
 		
 		<service
-			android:name="com.benjy3gg.giphydream.AerialDream"
+			android:name=".GiphyDream"
 			android:exported="true"
 			android:label="@string/daydream_name"
 			android:permission="android.permission.BIND_DREAM_SERVICE">

@@ -5,21 +5,15 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 	
-	<com.benjy3gg.giphydream.SimplePlayer
-		android:id="@+id/player2"
+	<pl.droidsonroids.gif.GifImageView
+		android:id="@+id/gifView1"
 		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_centerInParent="true"
-		app:layout_aspectRatio="178%"
-		app:layout_widthPercent="100%"/>
-	
-	<com.benjy3gg.giphydream.SimplePlayer
-		android:id="@+id/player1"
+		android:layout_height="match_parent"/>
+
+	<pl.droidsonroids.gif.GifImageView
+		android:id="@+id/gifView2"
 		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_centerInParent="true"
-		app:layout_aspectRatio="178%"
-		app:layout_widthPercent="100%"/>
+		android:layout_height="match_parent"/>
 	
 	<TextView
 		android:id="@+id/loading"
@@ -28,10 +22,10 @@
 		android:gravity="bottom|end"
 		android:padding="40dp"
 		android:background="#000"
-		android:text="@string/loading_aerial"
 		android:textColor="#fff"
 		android:textSize="30sp"
-		android:alpha="0.9"/>
+		android:alpha="0.9"
+		android:text="@string/loading_aerial" />
 
 	<ProgressBar
         android:id="@+id/progress"
@@ -51,5 +45,12 @@
 		android:alpha="0.9"
 		app:layout_marginTopPercent="93%"
 		app:layout_marginLeftPercent="5%" />
+
+	<ImageView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/giphy_huge"
+		app:layout_marginTopPercent="95%"
+		app:layout_marginLeftPercent="90%" />
 
 </android.support.percent.PercentRelativeLayout>
