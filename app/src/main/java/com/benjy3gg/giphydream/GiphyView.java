@@ -1,40 +1,27 @@
 package com.benjy3gg.giphydream;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.renderscript.ScriptGroup;
 import android.support.percent.PercentRelativeLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.benjy3gg.giphydream.responses.Gif;
 import com.benjy3gg.giphydream.responses.GiphyResponse;
 import com.benjy3gg.giphydream.service.GifDownloader;
 import com.benjy3gg.giphydream.service.GiphyService;
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import java.util.Random;
 
 import pl.droidsonroids.gif.AnimationListener;
@@ -47,6 +34,8 @@ import retrofit2.Response;
 public class GiphyView extends PercentRelativeLayout {
     private static final int GIF_DOWNLOADED = 1;
     private static final int FADE_DURATION = 5000;
+    public GifDrawable mCurrentDrawable;
+    public GifDrawable mNextDrawable;
     private Context mContext;
     private Random            mRandom;
     private Handler           mHandler;
@@ -55,8 +44,6 @@ public class GiphyView extends PercentRelativeLayout {
     private boolean 		  mFirstPlay;
     private GiphyResponse     mResponse;
     private ArrayList<Gif>   mSafeGifs = new ArrayList<Gif>();
-    public GifDrawable       mCurrentDrawable;
-    public GifDrawable       mNextDrawable;
     private int               mIndex;
     private boolean           mFirstGif;
 
@@ -79,7 +66,7 @@ public class GiphyView extends PercentRelativeLayout {
     private TextView mSlugText;
     private int mCurrentLoop;
     private int mMinLoop = 2;
-    private int mNumGifsToGet = 15;
+    private int mNumGifsToGet = 25;
 
     public GiphyView(Context context) {
         super(context);
@@ -195,12 +182,9 @@ public class GiphyView extends PercentRelativeLayout {
 
     public void downloadNextGif() {
         Log.d("mSafeGifs", "We have " + mSafeGifs.size() + " GIFS in queue");
-        if(mIndex >= mSafeGifs.size()-1) {
-            mIndex = 0;
-            //loadNewTrending(mNumGifsToGet);
-            //get new trending urlarray?
-        }
+
         String gifUrl = mSafeGifs.get(mIndex).images.fixed_height.url;
+
 
         try {
             downloader.run(gifUrl, new okhttp3.Callback() {
@@ -227,10 +211,18 @@ public class GiphyView extends PercentRelativeLayout {
                                         .start();
                             }
                             mNextDrawable = gifFromStream;
+                            Log.d("Index: ", "" + mIndex);
                             mNextSlug = mSafeGifs.get(mIndex).slug;
-                            addListener(mNextDrawable);
-                            mIndex++;
+                            if (mIndex > mSafeGifs.size() - 2) {
+                                mIndex = 0;
+                                //loadNewTrending(mNumGifsToGet);
+                                //get new trending urlarray?
+                            } else {
+                                mIndex++;
+                            }
 
+
+                            addListener(mNextDrawable);
                         }
                     });
                 }
@@ -238,8 +230,6 @@ public class GiphyView extends PercentRelativeLayout {
         }catch(IOException e) {
             Log.d("IOException: ", e.getMessage());
         }
-
-
 
     }
 
@@ -256,6 +246,7 @@ public class GiphyView extends PercentRelativeLayout {
                     mNextSlug = null;
                     mGifView1.setImageDrawable(mCurrentDrawable);
                     mCurrentSlug = mCurrentSlug.substring(0,mCurrentSlug.lastIndexOf("-") != -1 ? mCurrentSlug.lastIndexOf("-") : mCurrentSlug.length());
+                    mSlugText.animate().rotationXBy(360).setDuration(1500).setInterpolator(new AccelerateDecelerateInterpolator()).start();
                     mSlugText.setText(mCurrentSlug.replace("-", " "));
                     mCurrentDrawable.start();
                     mCurrentLoop = 0;
