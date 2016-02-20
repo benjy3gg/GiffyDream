@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.benjy3gg.giphydream.responses.Gif;
+import com.benjy3gg.giphydream.responses.GifSingle;
 import com.benjy3gg.giphydream.responses.GiphyResponse;
 import com.benjy3gg.giphydream.service.GifDownloader;
 import com.benjy3gg.giphydream.service.GiphyService;
@@ -66,7 +67,12 @@ public class GiphyView extends PercentRelativeLayout {
     private TextView mSlugText;
     private int mCurrentLoop;
     private int mMinLoop = 2;
-    private int mNumGifsToGet = 25;
+    private int mNumGifsToGet = 10;
+    private GiphyService mService;
+    private GifSingle mCurrentRandomGif;
+    private GifSingle mNextGif;
+    private int mOffsetMulti = 0;
+    private long start;
 
     public GiphyView(Context context) {
         super(context);
@@ -111,8 +117,10 @@ public class GiphyView extends PercentRelativeLayout {
         mGifView2 = (GifImageView) findViewById(R.id.gifView2);
 
         downloader = new GifDownloader();
-
+        mService = new GiphyService();
+        //loadNewRandom("cat");
         loadNewTrending(0);
+
 
         try {
             mCurrentDrawable = new GifDrawable(getResources(), R.drawable.api_giphy_header);
@@ -152,15 +160,15 @@ public class GiphyView extends PercentRelativeLayout {
     }
 
     public void loadNewTrending(int offset) {
-        GiphyService service = new GiphyService();
-        Call<GiphyResponse> call = service.catGifs(mNumGifsToGet, offset);
 
+        Call<GiphyResponse> call = mService.catGifs(mNumGifsToGet, offset * mOffsetMulti);
         call.enqueue(new Callback<GiphyResponse>() {
             @Override
             public void onResponse(Call<GiphyResponse> call, Response<GiphyResponse> response) {
                 mResponse = response.body();
                 Log.e("Giphy-Response", mResponse.getData() + "");
                 mGifData = mResponse.getData();
+                mOffsetMulti++;
                 gifDataTODrawables();
             }
 
@@ -171,12 +179,33 @@ public class GiphyView extends PercentRelativeLayout {
         });
     }
 
+    public void loadNewRandom(String tag) {
+        start = System.nanoTime();
+        Call<GifSingle> call = mService.getRandomTag(tag);
+        call.enqueue(new Callback<GifSingle>() {
+            @Override
+            public void onResponse(Call<GifSingle> call, Response<GifSingle> response) {
+                long endTime = System.nanoTime();
+                mCurrentRandomGif = response.body();
+                Log.e("Giphy-Response", "took: " + (endTime - start) + " " + mCurrentRandomGif.caption);
+                loadNewRandom("cat");
+            }
+
+            @Override
+            public void onFailure(Call<GifSingle> call, Throwable t) {
+                Log.e("Giphy-Failure", t.getCause() + " " + t.getStackTrace());
+            }
+        });
+    }
+
+
+
     public void gifDataTODrawables() {
+        mSafeGifs.clear();
         for(Gif g: mGifData) {
             if(g.images.fixed_height.size <= 2500000) {
                 mSafeGifs.add(g);
             }
-
         }
     }
 
@@ -184,7 +213,6 @@ public class GiphyView extends PercentRelativeLayout {
         Log.d("mSafeGifs", "We have " + mSafeGifs.size() + " GIFS in queue");
 
         String gifUrl = mSafeGifs.get(mIndex).images.fixed_height.url;
-
 
         try {
             downloader.run(gifUrl, new okhttp3.Callback() {
@@ -215,7 +243,7 @@ public class GiphyView extends PercentRelativeLayout {
                             mNextSlug = mSafeGifs.get(mIndex).slug;
                             if (mIndex > mSafeGifs.size() - 2) {
                                 mIndex = 0;
-                                //loadNewTrending(mNumGifsToGet);
+                                loadNewTrending(mNumGifsToGet);
                                 //get new trending urlarray?
                             } else {
                                 mIndex++;
@@ -246,7 +274,7 @@ public class GiphyView extends PercentRelativeLayout {
                     mNextSlug = null;
                     mGifView1.setImageDrawable(mCurrentDrawable);
                     mCurrentSlug = mCurrentSlug.substring(0,mCurrentSlug.lastIndexOf("-") != -1 ? mCurrentSlug.lastIndexOf("-") : mCurrentSlug.length());
-                    mSlugText.animate().rotationXBy(360).setDuration(1500).setInterpolator(new AccelerateDecelerateInterpolator()).start();
+                    mSlugText.animate().rotationXBy(360).setDuration(500).setInterpolator(new AccelerateDecelerateInterpolator()).start();
                     mSlugText.setText(mCurrentSlug.replace("-", " "));
                     mCurrentDrawable.start();
                     mCurrentLoop = 0;
