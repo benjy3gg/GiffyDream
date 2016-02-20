@@ -19,9 +19,8 @@
 		android:id="@+id/loading"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:gravity="bottom|end"
+		android:gravity="bottom|center"
 		android:padding="40dp"
-		android:background="#000"
 		android:textColor="#fff"
 		android:textSize="30sp"
 		android:alpha="0.9"
@@ -49,8 +48,31 @@
 	<ImageView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:src="@drawable/giphy_huge"
+		android:src="@drawable/huge"
 		app:layout_marginTopPercent="95%"
-		app:layout_marginLeftPercent="90%" />
+		app:layout_marginLeftPercent="90%"
+		 />
+
+	<TextView
+		android:id="@+id/slug"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="end"
+		android:text="Test-asd-asdas-asd"
+		app:layout_marginTopPercent="90%"
+		android:paddingEnd="20dp"
+		android:fontFamily="sans-serif-thin"
+		android:textSize="24sp"/>
+
+
+	<TextClock
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:textSize="56sp"
+		android:fontFamily="sans-serif-thin"
+		android:alpha="0.9"
+		android:gravity="end"
+		app:layout_marginTopPercent="80%"
+		android:paddingEnd="15dp" />
 
 </android.support.percent.PercentRelativeLayout>

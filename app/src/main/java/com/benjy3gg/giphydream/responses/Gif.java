@@ -11,9 +11,11 @@ public class Gif {
     public String source;
     public String username;
     public GiphyImage images;
+    public String slug;
 
     @Override
     public String toString() {
         return id + " " + source;
     }
+
 }

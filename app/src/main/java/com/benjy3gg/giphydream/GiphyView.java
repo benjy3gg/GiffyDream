@@ -54,7 +54,7 @@ public class GiphyView extends PercentRelativeLayout {
     private boolean           mPlayerReady;
     private boolean 		  mFirstPlay;
     private GiphyResponse     mResponse;
-    private ArrayList<String>      mGifUrls = new ArrayList<String>();
+    private ArrayList<Gif>   mSafeGifs = new ArrayList<Gif>();
     public GifDrawable       mCurrentDrawable;
     public GifDrawable       mNextDrawable;
     private int               mIndex;
@@ -74,6 +74,11 @@ public class GiphyView extends PercentRelativeLayout {
     private ArrayList<Gif> mGifData  = new ArrayList<Gif>();
     private GifDownloader downloader;
     private int mLoop = 0;
+    private String mNextSlug;
+    private String mCurrentSlug;
+    private TextView mSlugText;
+    private int mCurrentLoop;
+    private int mMinLoop = 2;
 
     public GiphyView(Context context) {
         super(context);
@@ -102,12 +107,14 @@ public class GiphyView extends PercentRelativeLayout {
         mLocation = (TextView) findViewById(R.id.location_text);
         mProgressBar = (ProgressBar) findViewById(R.id.progress);
         mProgressBar.setVisibility(INVISIBLE);
+        mSlugText = (TextView) findViewById(R.id.slug);
 
 
         mRandom = new Random(System.currentTimeMillis());
         mHandler = new Handler(Looper.getMainLooper());
         mPlayerReady = false;
 
+        mCurrentLoop = 0;
 
 
         mVideoCachePath = getContext().getExternalCacheDir().getPath() + "/videos";
@@ -137,30 +144,33 @@ public class GiphyView extends PercentRelativeLayout {
 
         try {
             mCurrentDrawable = new GifDrawable(getResources(), R.drawable.api_giphy_header);
+            mCurrentSlug = "kittey";
+            mSlugText.setText(mCurrentSlug);
             mGifView1.setImageDrawable(mCurrentDrawable);
             mCurrentDrawable.start();
-            mLoadingView
-                    .animate()
-                    .alpha(0)
-                    .setDuration(1000)
-                    .setInterpolator(new DecelerateInterpolator())
-                    .start();
             mCurrentDrawable.addAnimationListener(new AnimationListener() {
                 @Override
                 public void onAnimationCompleted(int loopNumber) {
                     Log.d("AnimationCompleted", loopNumber + " times already!");
-                    if (mNextDrawable != null) {
+
+                    if (mNextDrawable != null && mCurrentLoop >= 2) {
                         mCurrentDrawable.stop();
                         mCurrentDrawable.recycle();
                         mCurrentDrawable = mNextDrawable;
+                        mCurrentSlug = mNextSlug;
+                        mNextSlug = null;
                         mNextDrawable = null;
                         mGifView1.setImageDrawable(mCurrentDrawable);
+                        mCurrentSlug = mCurrentSlug.substring(0,mCurrentSlug.lastIndexOf("-") != -1 ? mCurrentSlug.lastIndexOf("-") : mCurrentSlug.length());
+                        mSlugText.setText(mCurrentSlug.replace("-", " "));
                         mCurrentDrawable.start();
+                        mCurrentLoop = 0;
                     }else {
-                        if(mGifUrls.size() > 0) {
+                        if(mSafeGifs.size() > 0) {
                             downloadNextGif();
                         }
                     }
+                    mCurrentLoop++;
                 }
             });
         } catch (IOException e) {
@@ -171,19 +181,19 @@ public class GiphyView extends PercentRelativeLayout {
     public void gifDataTODrawables() {
         for(Gif g: mGifData) {
             if(g.images.fixed_height.size <= 2000000) {
-                mGifUrls.add(g.images.fixed_height.url);
+                mSafeGifs.add(g);
             }
 
         }
     }
 
     public void downloadNextGif() {
-        if(mIndex >= mGifUrls.size()) {
+        if(mIndex >= mSafeGifs.size()) {
             mIndex = 0;
             //get new trending urlarray?
         }
-        String gifUrl = mGifUrls.get(mIndex);
-        mIndex++;
+        String gifUrl = mSafeGifs.get(mIndex).images.fixed_height.url;
+
         try {
             downloader.run(gifUrl, new okhttp3.Callback() {
                 @Override
@@ -200,8 +210,19 @@ public class GiphyView extends PercentRelativeLayout {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
+                            if(mLoadingView.getAlpha() >= 0) {
+                                mLoadingView
+                                        .animate()
+                                        .alpha(0)
+                                        .setDuration(1000)
+                                        .setInterpolator(new DecelerateInterpolator())
+                                        .start();
+                            }
                             mNextDrawable = gifFromStream;
+                            mNextSlug = mSafeGifs.get(mIndex).slug;
                             addListener(mNextDrawable);
+                            mIndex++;
+
                         }
                     });
                 }
@@ -210,24 +231,32 @@ public class GiphyView extends PercentRelativeLayout {
             Log.d("IOException: ", e.getMessage());
         }
 
+
+
     }
 
     public void addListener(GifDrawable draw) {
         draw.addAnimationListener(new AnimationListener() {
             @Override
             public void onAnimationCompleted(int loopNumber) {
-                if (mNextDrawable != null) {
+                if (mNextDrawable != null && mCurrentLoop >= 2) {
                     mCurrentDrawable.stop();
                     mCurrentDrawable.recycle();
                     mCurrentDrawable = mNextDrawable;
                     mNextDrawable = null;
+                    mCurrentSlug = mNextSlug;
+                    mNextSlug = null;
                     mGifView1.setImageDrawable(mCurrentDrawable);
+                    mCurrentSlug = mCurrentSlug.substring(0,mCurrentSlug.lastIndexOf("-") != -1 ? mCurrentSlug.lastIndexOf("-") : mCurrentSlug.length());
+                    mSlugText.setText(mCurrentSlug.replace("-", " "));
                     mCurrentDrawable.start();
+                    mCurrentLoop = 0;
                 }else {
-                    if(mGifUrls.size() > 0) {
+                    if(mSafeGifs.size() > 0) {
                         downloadNextGif();
                     }
                 }
+                mCurrentLoop++;
             }
         });
     }
@@ -253,6 +282,16 @@ public class GiphyView extends PercentRelativeLayout {
     public void stop() {
         mNextDrawable.stop();
         mCurrentDrawable.stop();
+    }
+
+    public class Tuple<X,Y> {
+        public final X slug;
+        public final Y url;
+
+        public Tuple(X x, Y y) {
+            this.slug = x;
+            this.url = y;
+        }
     }
 
 }
