@@ -32,7 +32,7 @@ import java.util.Random;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class AerialView extends PercentRelativeLayout implements retrofit.Callback<List<AerialVideo>>, SimplePlayer.PlayerListener {
+public class GiphyView extends PercentRelativeLayout implements retrofit.Callback<List<AerialVideo>>, SimplePlayer.PlayerListener {
 	private static final int FADE_DURATION = 5000;
 	private Context mContext;
 	private List<AerialVideo> mAerialVideos;
@@ -53,15 +53,15 @@ public class AerialView extends PercentRelativeLayout implements retrofit.Callba
 	private TextView mLocation;
 	private SharedPreferences mSharedPrefs;
 
-	public AerialView(Context context) {
+	public GiphyView(Context context) {
 		super(context);
 	}
 	
-	public AerialView(Context context, AttributeSet attrs) {
+	public GiphyView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 	
-	public AerialView(Context context, AttributeSet attrs, int defStyleAttr) {
+	public GiphyView(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 	}
 	

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.service.dreams.DreamService;
 
-public class AerialDream extends DreamService {
+public class GiphyDream extends DreamService {
 	private AerialView mAerialView;
 	private SharedPreferences mSharedPrefs;
 	
