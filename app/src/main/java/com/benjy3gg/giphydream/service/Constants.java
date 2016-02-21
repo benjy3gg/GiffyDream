@@ -5,5 +5,5 @@ package com.benjy3gg.giphydream.service;
  */
 public abstract class Constants {
     public static String GIPHY_ENDPOINT = "http://api.giphy.com/";
-    public static String GIPHY_KEY = "dc6zaTOxFJmzC";
+    public static String GIPHY_KEY = "CW27AW0nlp5u0";
 }

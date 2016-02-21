@@ -7,15 +7,19 @@ import android.service.dreams.DreamService;
 public class GiphyDream extends DreamService {
 	private GiphyView mGiphyView;
 	private SharedPreferences mSharedPrefs;
-	
+	private String mTag;
+
 	@Override
 	public void onAttachedToWindow() {
 		super.onAttachedToWindow();
 		setFullscreen(true);
 		setContentView(R.layout.daydream);
+
+		mTag = getApplicationContext().getSharedPreferences(getPackageName() + "_preferences", Context.MODE_PRIVATE).getString("tag", "cat");
 		
 		mGiphyView = (GiphyView) findViewById(R.id.aerial);
-		mGiphyView.setSharedPrefs(getSharedPreferences(getPackageName(), Context.MODE_PRIVATE));
+		mGiphyView.setTag(mTag);
+
 	}
 	
 	/* DreamService */

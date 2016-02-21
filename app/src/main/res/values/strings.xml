@@ -2,4 +2,22 @@
 	<string name="daydream_name">Giphy Dream</string>
 	<string name="loading_aerial">Loading Trending GIPHYs…</string>
 	<string name="show_location">Show location</string>
+    <string-array name="tags">
+        <item>Cats</item>
+        <item>Trending</item>
+        <item>Fails</item>
+        <item>Americas funniest Videos</item>
+        <item>Random</item>
+    </string-array>
+    <string-array name="tags_values">
+        <item>cat</item>
+        <item>giphytrending</item>
+        <item>fails</item>
+        <item>afv</item>
+        <item></item>
+    </string-array>
+    <string-array name="default_array">
+        <item>giphytrending</item>
+    </string-array>
+    <string name="tags_title">Please select Tag</string>
 </resources>

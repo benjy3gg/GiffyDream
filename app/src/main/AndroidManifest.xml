@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-	package="com.benjy3gg.giphydream"
-	xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	package="com.benjy3gg.giphydream">
 	
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -20,7 +20,8 @@
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/daydream_name"
 		android:supportsRtl="true"
-		android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+		android:theme="@style/Theme.AppCompat.NoActionBar"
+		tools:replace="android:label">
 		
 		<!--<activity-->
 			<!--android:name=".TestActivity"-->
@@ -42,10 +43,10 @@
 				<action android:name="android.service.dreams.DreamService"/>
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
-			
-			<!--<meta-data-->
-				<!--android:name="android.service.dream"-->
-				<!--android:resource="@xml/aerial_dream"/>-->
+
+			<meta-data
+				android:name="android.service.dream"
+				android:resource="@xml/dream_info" />
 		</service>
 	
 	</application>
