@@ -5,7 +5,6 @@ package com.benjy3gg.giphydream.responses;
  */
 public class GifSingle {
     public GifData data;
-    public GifMeta meta;
 
     @Override
     public String toString() {

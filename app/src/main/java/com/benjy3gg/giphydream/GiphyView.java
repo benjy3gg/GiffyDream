@@ -19,6 +19,7 @@ import com.benjy3gg.giphydream.responses.GifSingle;
 import com.benjy3gg.giphydream.service.GifDownloader;
 import com.benjy3gg.giphydream.service.GiphyService;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -88,8 +89,9 @@ public class GiphyView extends PercentRelativeLayout implements SimpleCallback {
         mHandler = new Handler(Looper.getMainLooper());
         mGifView1 = (GifImageView) findViewById(R.id.gifView1);
 
-        downloader = new GifDownloader();
-        mService = new GiphyService();
+        File cacheDir = getContext().getExternalCacheDir();
+        downloader = new GifDownloader(cacheDir);
+        mService = new GiphyService(cacheDir);
 
         try {
             mDrawable = new GifDrawableEx(getResources(), R.drawable.api_giphy_header);
@@ -216,7 +218,7 @@ public class GiphyView extends PercentRelativeLayout implements SimpleCallback {
 
         public GifDrawableEx(Resources resources, int api_giphy_header) throws IOException {
             super(resources, api_giphy_header);
-            this.mMinimumLoopCount = 10;
+            this.mMinimumLoopCount = 1;
             this.addListener();
             //this.start();
         }
