@@ -2,28 +2,25 @@ package com.benjy3gg.giphydream;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.percent.PercentRelativeLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.benjy3gg.giphydream.responses.Gif;
 import com.benjy3gg.giphydream.responses.GifSingle;
-import com.benjy3gg.giphydream.responses.GiphyResponse;
 import com.benjy3gg.giphydream.service.GifDownloader;
 import com.benjy3gg.giphydream.service.GiphyService;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 
 import pl.droidsonroids.gif.AnimationListener;
 import pl.droidsonroids.gif.GifDrawable;
@@ -32,47 +29,28 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class GiphyView extends PercentRelativeLayout {
-    private static final int GIF_DOWNLOADED = 1;
-    private static final int FADE_DURATION = 5000;
+public class GiphyView extends PercentRelativeLayout implements SimpleCallback {
+    private static final String TAG = "GiphyView";
     public GifDrawable mCurrentDrawable;
     public GifDrawable mNextDrawable;
-    private Context mContext;
-    private Random            mRandom;
-    private Handler           mHandler;
-    private String            mVideoCachePath;
-    private boolean           mPlayerReady;
-    private boolean 		  mFirstPlay;
-    private GiphyResponse     mResponse;
-    private ArrayList<Gif>   mSafeGifs = new ArrayList<Gif>();
-    private int               mIndex;
-    private boolean           mFirstGif;
+    private View mLoadingView;
 
-    private PercentRelativeLayout mContainer;
-    private View                  mLoadingView;
-
-    private SimplePlayer mActivePlayer;
-    private SimplePlayer mBufferPlayer;
     private ProgressBar mProgressBar;
-    private TextView mLocation;
-    private SharedPreferences mSharedPrefs;
+
     private GifImageView mGifView1;
-    private GifImageView mGifView2;
-    private boolean mFirst = true;
-    private ArrayList<Gif> mGifData  = new ArrayList<Gif>();
     private GifDownloader downloader;
-    private int mLoop = 0;
-    private String mNextSlug;
-    private String mCurrentSlug;
     private TextView mSlugText;
-    private int mCurrentLoop;
-    private int mMinLoop = 2;
-    private int mNumGifsToGet = 10;
     private GiphyService mService;
     private GifSingle mCurrentRandomGif;
-    private GifSingle mNextGif;
-    private int mOffsetMulti = 0;
     private long start;
+    private GifDrawableEx mDrawable;
+    private SpecialList mlist = new SpecialList();
+    private String mTag;
+    private PercentRelativeLayout mContainer;
+    private SharedPreferences mSharedPrefs;
+    private Handler mHandler;
+    private int mCounterPlayed = 0;
+    private int mCounterDownloaded = 0;
 
     public GiphyView(Context context) {
         super(context);
@@ -90,6 +68,11 @@ public class GiphyView extends PercentRelativeLayout {
         mSharedPrefs = prefs;
     }
 
+    public void setTag(String tag) {
+        this.mTag = tag;
+        mSlugText.setText(tag);
+    }
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -98,85 +81,24 @@ public class GiphyView extends PercentRelativeLayout {
 
         mContainer = (PercentRelativeLayout) findViewById(R.id.container);
         mLoadingView = findViewById(R.id.loading);
-        mLocation = (TextView) findViewById(R.id.location_text);
         mProgressBar = (ProgressBar) findViewById(R.id.progress);
         mProgressBar.setVisibility(INVISIBLE);
         mSlugText = (TextView) findViewById(R.id.slug);
 
-
-        mRandom = new Random(System.currentTimeMillis());
         mHandler = new Handler(Looper.getMainLooper());
-        mPlayerReady = false;
-
-        mCurrentLoop = 0;
-
-
-        mVideoCachePath = getContext().getExternalCacheDir().getPath() + "/videos";
-
         mGifView1 = (GifImageView) findViewById(R.id.gifView1);
-        mGifView2 = (GifImageView) findViewById(R.id.gifView2);
 
         downloader = new GifDownloader();
         mService = new GiphyService();
-        //loadNewRandom("cat");
-        loadNewTrending(0);
-
 
         try {
-            mCurrentDrawable = new GifDrawable(getResources(), R.drawable.api_giphy_header);
-            mCurrentSlug = "kittey";
-            mSlugText.setText(mCurrentSlug);
-            mGifView1.setImageDrawable(mCurrentDrawable);
-            mCurrentDrawable.start();
-            addListener(mCurrentDrawable);
-            /*mCurrentDrawable.addAnimationListener(new AnimationListener() {
-                @Override
-                public void onAnimationCompleted(int loopNumber) {
-                    Log.d("AnimationCompleted", loopNumber + " times already!");
-
-                    if (mNextDrawable != null && mCurrentLoop >= 2) {
-                        mCurrentDrawable.stop();
-                        mCurrentDrawable.recycle();
-                        mCurrentDrawable = mNextDrawable;
-                        mCurrentSlug = mNextSlug;
-                        mNextSlug = null;
-                        mNextDrawable = null;
-                        mGifView1.setImageDrawable(mCurrentDrawable);
-                        mCurrentSlug = mCurrentSlug.substring(0,mCurrentSlug.lastIndexOf("-") != -1 ? mCurrentSlug.lastIndexOf("-") : mCurrentSlug.length());
-                        mSlugText.setText(mCurrentSlug.replace("-", " "));
-                        mCurrentDrawable.start();
-                        mCurrentLoop = 0;
-                    }else {
-                        if(mSafeGifs.size() > 0) {
-                            downloadNextGif();
-                        }
-                    }
-                    mCurrentLoop++;
-                }
-            });*/
+            mDrawable = new GifDrawableEx(getResources(), R.drawable.api_giphy_header);
+            onSetNewGif();
+            onNeedNewGif();
+            //loadNewRandom("cat");
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void loadNewTrending(int offset) {
-
-        Call<GiphyResponse> call = mService.catGifs(mNumGifsToGet, offset * mOffsetMulti);
-        call.enqueue(new Callback<GiphyResponse>() {
-            @Override
-            public void onResponse(Call<GiphyResponse> call, Response<GiphyResponse> response) {
-                mResponse = response.body();
-                Log.e("Giphy-Response", mResponse.getData() + "");
-                mGifData = mResponse.getData();
-                mOffsetMulti++;
-                gifDataTODrawables();
-            }
-
-            @Override
-            public void onFailure(Call<GiphyResponse> call, Throwable t) {
-                Log.e("Giphy-Failure", t.getCause() + " " + t.getStackTrace());
-            }
-        });
     }
 
     public void loadNewRandom(String tag) {
@@ -187,8 +109,8 @@ public class GiphyView extends PercentRelativeLayout {
             public void onResponse(Call<GifSingle> call, Response<GifSingle> response) {
                 long endTime = System.nanoTime();
                 mCurrentRandomGif = response.body();
-                Log.e("Giphy-Response", "took: " + (endTime - start) + " " + mCurrentRandomGif.caption);
-                loadNewRandom("cat");
+                Log.e("Giphy-Response", "took: " + (endTime - start) + " " + mCurrentRandomGif);
+                GiphyView.this.onNewGifUrl(mCurrentRandomGif);
             }
 
             @Override
@@ -198,22 +120,9 @@ public class GiphyView extends PercentRelativeLayout {
         });
     }
 
-
-
-    public void gifDataTODrawables() {
-        mSafeGifs.clear();
-        for(Gif g: mGifData) {
-            if(g.images.fixed_height.size <= 2500000) {
-                mSafeGifs.add(g);
-            }
-        }
-    }
-
-    public void downloadNextGif() {
-        Log.d("mSafeGifs", "We have " + mSafeGifs.size() + " GIFS in queue");
-
-        String gifUrl = mSafeGifs.get(mIndex).images.fixed_height.url;
-
+    public void downloadGif(GifSingle gif) {
+        String gifUrl = gif.getUrl();
+        final String gifId = gif.getId();
         try {
             downloader.run(gifUrl, new okhttp3.Callback() {
                 @Override
@@ -221,112 +130,146 @@ public class GiphyView extends PercentRelativeLayout {
 
                 @Override
                 public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
-                    Log.e("Content-Type: ", "" + response.body().contentType());
-                    byte[] sourceIs = response.body().bytes();
-                    final GifDrawable gifFromStream = new GifDrawable(sourceIs);
-                    Message msg = Message.obtain();
-                    msg.what = GIF_DOWNLOADED;
-                    //mHandler.dispatchMessage(msg);
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(mLoadingView.getAlpha() >= 0) {
-                                mLoadingView
-                                        .animate()
-                                        .alpha(0)
-                                        .setDuration(1000)
-                                        .setInterpolator(new DecelerateInterpolator())
-                                        .start();
-                            }
-                            mNextDrawable = gifFromStream;
-                            Log.d("Index: ", "" + mIndex);
-                            mNextSlug = mSafeGifs.get(mIndex).slug;
-                            if (mIndex > mSafeGifs.size() - 2) {
-                                mIndex = 0;
-                                loadNewTrending(mNumGifsToGet);
-                                //get new trending urlarray?
-                            } else {
-                                mIndex++;
-                            }
 
+                    if (response.body().contentLength() <= 15000000 && !mlist.contains(gifId)) {
+                        byte[] sourceIs = response.body().bytes();
+                        final GifDrawableEx gifFromStream = new GifDrawableEx(sourceIs);
+                        mlist.add(gifId);
+                        onNewGif(gifFromStream, gifId);
+                        mCounterDownloaded++;
+                        Log.e(TAG, "downloaded: " + mCounterDownloaded);
+                    } else {
+                        Log.e(TAG, "size or duplicate: " + response.body().contentLength());
+                        response.body().close();
+                        onNeedNewGif();
+                    }
 
-                            addListener(mNextDrawable);
-                        }
-                    });
+                    Log.d(TAG, "" + mlist);
                 }
             });
         }catch(IOException e) {
             Log.d("IOException: ", e.getMessage());
         }
-
-    }
-
-    public void addListener(GifDrawable draw) {
-        draw.addAnimationListener(new AnimationListener() {
-            @Override
-            public void onAnimationCompleted(int loopNumber) {
-                if (mNextDrawable != null && mCurrentLoop >= 2) {
-                    mCurrentDrawable.stop();
-                    mCurrentDrawable.recycle();
-                    mCurrentDrawable = mNextDrawable;
-                    mNextDrawable = null;
-                    mCurrentSlug = mNextSlug;
-                    mNextSlug = null;
-                    mGifView1.setImageDrawable(mCurrentDrawable);
-                    mCurrentSlug = mCurrentSlug.substring(0,mCurrentSlug.lastIndexOf("-") != -1 ? mCurrentSlug.lastIndexOf("-") : mCurrentSlug.length());
-                    mSlugText.animate().rotationXBy(360).setDuration(500).setInterpolator(new AccelerateDecelerateInterpolator()).start();
-                    mSlugText.setText(mCurrentSlug.replace("-", " "));
-                    mCurrentDrawable.start();
-                    mCurrentLoop = 0;
-                }else {
-                    if(mSafeGifs.size() > 0) {
-                        downloadNextGif();
-                    }
-                }
-                mCurrentLoop++;
-            }
-        });
-    }
-
-    public void setGif(final GifDrawable gif) {
-
-        mNextDrawable = gif;
-
-        if(mCurrentDrawable == null) {
-            Log.d("setGif", "we have no mCurrentDrawable");
-
-            mFirst = false;
-            mCurrentDrawable = gif;
-            mGifView1.setImageDrawable(mCurrentDrawable);
-            mCurrentDrawable.start();
-
-        }else {
-
-        }
-
-    }
-
-    public void animateView() {
-
     }
 
     public void stop() {
-        if(mNextDrawable != null) {
+        if (mNextDrawable != null) {
             mNextDrawable.stop();
         }
 
-        if(mNextDrawable != null) {
+        if (mNextDrawable != null) {
             mCurrentDrawable.stop();
         }
     }
 
-    public class Tuple<X,Y> {
-        public final X slug;
-        public final Y url;
+    @Override
+    public void onNewGif(final GifDrawableEx drawable, final String caption) {
+        Log.d(TAG, "onNewGif");
+        /*if(mDrawable != null) {
+            mDrawable.stop();
+            mDrawable.recycle();
+        }*/
+        mDrawable = drawable;
+    }
 
-        public Tuple(X x, Y y) {
-            this.slug = x;
-            this.url = y;
+    @Override
+    public void onNewGifUrl(GifSingle gif) {
+        Log.d(TAG, "onNewGifUrl");
+        downloadGif(gif);
+    }
+
+    @Override
+    public void onNeedNewGif() {
+        Log.d(TAG, "onNeedNewGif");
+        loadNewRandom(mTag);
+    }
+
+    @Override
+    public void onSetNewGif() {
+        Log.d(TAG, "onNewGif");
+        if (mLoadingView.getAlpha() > 0) {
+            mLoadingView
+                    .animate()
+                    .alpha(0)
+                    .setDuration(1000)
+                    .setInterpolator(new AccelerateInterpolator())
+                    .start();
+        }
+        mGifView1.setImageDrawable(mDrawable);
+        mDrawable.start();
+        mCounterPlayed++;
+        Log.e(TAG, "played: " + mCounterPlayed);
+    }
+
+    public class GifDrawableEx extends GifDrawable {
+
+        public int mCurrentLoopCount = 0;
+        public int mMinimumLoopCount = 2;
+        public GifDrawableEx mNextGif;
+
+
+        public GifDrawableEx(@NonNull byte[] bytes) throws IOException {
+            super(bytes);
+            this.calcMinimumLoops();
+            this.addListener();
+        }
+
+        public GifDrawableEx(Resources resources, int api_giphy_header) throws IOException {
+            super(resources, api_giphy_header);
+            this.mMinimumLoopCount = 10;
+            this.addListener();
+            //this.start();
+        }
+
+        public void calcMinimumLoops() {
+            int duration = this.getDuration();
+            Log.d(TAG, "duration: " + duration);
+            if (duration > 1800) {
+                this.mMinimumLoopCount = 1;
+            } else {
+                double count = 1800.0f / duration;
+                this.mMinimumLoopCount = (int) Math.ceil(count);
+            }
+
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onNeedNewGif();
+                }
+            }, duration);
+        }
+
+        public void addListener() {
+            this.addAnimationListener(new AnimationListener() {
+                @Override
+                public void onAnimationCompleted(int loopNumber) {
+                    Log.d(TAG, "loop: " + mCurrentLoopCount + " of " + mMinimumLoopCount + " loops.");
+                    if (mCurrentLoopCount == 0) {
+
+                    }
+
+                    if (mCurrentLoopCount >= mMinimumLoopCount - 1 && mDrawable != null) {
+                        onSetNewGif();
+                    }
+
+                    mCurrentLoopCount++;
+                }
+
+            });
+        }
+
+    }
+
+    public class SpecialList extends ArrayList<String> {
+
+        @Override
+        public boolean add(String string) {
+            if (this.size() >= 20) {
+                this.remove(0);
+                return super.add(string);
+            }
+
+            return super.add(string);
         }
     }
 
