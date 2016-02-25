@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-	<CheckBoxPreference
-		android:key="show_location"
-		android:title="@string/show_location"
-		android:defaultValue="true"/>
+	<ListPreference
+		android:defaultValue="@array/default_array"
+		android:entries="@array/tags"
+		android:entryValues="@array/tags_values"
+		android:key="tag"
+		android:title="@string/tags_title" />
 </PreferenceScreen>

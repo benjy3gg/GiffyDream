@@ -2,4 +2,5 @@
 <resources>
     <string name="loading_aerial">Lade die besten GIPHYs...</string>
     <string name="show_location">Standort anzeigen</string>
+    <string name="tags_title">Bitte die Kategorie auswählen</string>
 </resources>
