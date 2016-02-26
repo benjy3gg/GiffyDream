@@ -52,6 +52,7 @@ public class GiphyView extends PercentRelativeLayout implements SimpleCallback {
     private Handler mHandler;
     private int mCounterPlayed = 0;
     private int mCounterDownloaded = 0;
+    private boolean mFirstLoaded = false;
 
     public GiphyView(Context context) {
         super(context);
@@ -166,6 +167,7 @@ public class GiphyView extends PercentRelativeLayout implements SimpleCallback {
 
     @Override
     public void onNewGif(final GifDrawableEx drawable, final String caption) {
+        mFirstLoaded = true;
         Log.d(TAG, "onNewGif");
         /*if(mDrawable != null) {
             mDrawable.stop();
@@ -189,7 +191,7 @@ public class GiphyView extends PercentRelativeLayout implements SimpleCallback {
     @Override
     public void onSetNewGif() {
         Log.d(TAG, "onNewGif");
-        if (mLoadingView.getAlpha() > 0) {
+        if (mLoadingView.getAlpha() > 0 && mFirstLoaded) {
             mLoadingView
                     .animate()
                     .alpha(0)

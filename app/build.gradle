@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.benjy3gg.giphydream"
+        applicationId "com.benjy3gg.giffydream"
         minSdkVersion 17
         targetSdkVersion 23
         versionCode 4
@@ -14,7 +14,7 @@ android {
     
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
