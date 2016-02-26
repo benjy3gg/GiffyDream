@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	package="com.benjy3gg.giphydream">
+	package="com.benjy3gg.giffydream">
 	
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -12,7 +12,7 @@
 	
 	<uses-feature
 		android:name="android.software.leanback"
-		android:required="false"/>
+		android:required="true"/>
 	
 	<application
 		android:allowBackup="true"
@@ -21,21 +21,22 @@
 		android:label="@string/daydream_name"
 		android:supportsRtl="true"
 		android:theme="@style/Theme.AppCompat.NoActionBar"
-		tools:replace="android:label">
-		
-		<!--<activity-->
-			<!--android:name=".TestActivity"-->
-			<!--android:configChanges="orientation|keyboardHidden|screenSize">-->
-			<!--<intent-filter>-->
-				<!--<action android:name="android.intent.action.MAIN"/>-->
-				<!--<category android:name="android.intent.category.LAUNCHER"/>-->
-			<!--</intent-filter>-->
-		<!--</activity>-->
-		
-		<activity android:name="com.benjy3gg.giphydream.SettingsActivity"/>
+		tools:replace="android:label"
+		android:banner="@drawable/banner" >
+
+		<activity android:name="com.benjy3gg.giffydream.SettingsActivity"/>
+
+		<activity android:name="com.benjy3gg.giffydream.GiffyDreamStart"
+				  android:theme="@style/Leanback">
+
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+			</intent-filter>
+		</activity>
 		
 		<service
-			android:name=".GiphyDream"
+			android:name="com.benjy3gg.giffydream.GiphyDream"
 			android:exported="true"
 			android:label="@string/daydream_name"
 			android:permission="android.permission.BIND_DREAM_SERVICE">

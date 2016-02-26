@@ -1,4 +1,4 @@
-package com.benjy3gg.giphydream.service;
+package com.benjy3gg.giffydream.service;
 
 /**
  * Created by bkopp on 19/02/16.

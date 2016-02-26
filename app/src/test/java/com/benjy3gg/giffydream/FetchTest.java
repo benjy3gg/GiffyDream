@@ -1,4 +1,4 @@
-package com.benjy3gg.giphydream;
+package com.benjy3gg.giffydream;
 
 import com.codingbuffalo.giphydream.service.AerialVideo;
 import com.codingbuffalo.giphydream.service.VideoService;

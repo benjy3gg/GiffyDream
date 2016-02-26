@@ -1,4 +1,4 @@
-package com.benjy3gg.giphydream.responses;
+package com.benjy3gg.giffydream.responses;
 
 public class GifMeta {
 

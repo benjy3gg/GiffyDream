@@ -1,4 +1,4 @@
-package com.benjy3gg.giphydream.responses;
+package com.benjy3gg.giffydream.responses;
 
 /**
  * Created by bkopp on 19/02/16.

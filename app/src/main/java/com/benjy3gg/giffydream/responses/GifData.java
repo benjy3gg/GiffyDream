@@ -1,4 +1,4 @@
-package com.benjy3gg.giphydream.responses;
+package com.benjy3gg.giffydream.responses;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

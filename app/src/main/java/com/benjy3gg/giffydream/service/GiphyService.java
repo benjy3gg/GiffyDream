@@ -1,7 +1,6 @@
-package com.benjy3gg.giphydream.service;
+package com.benjy3gg.giffydream.service;
 
-import com.benjy3gg.giphydream.responses.GifSingle;
-import com.benjy3gg.giphydream.responses.GiphyResponse;
+import com.benjy3gg.giffydream.responses.GifSingle;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;

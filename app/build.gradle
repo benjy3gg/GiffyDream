@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.benjy3gg.giffydream"
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 4
         versionName "0.4"

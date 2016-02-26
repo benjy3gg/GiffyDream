@@ -1,8 +1,7 @@
-package com.benjy3gg.giphydream.service;
+package com.benjy3gg.giffydream.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
 import okhttp3.Call;

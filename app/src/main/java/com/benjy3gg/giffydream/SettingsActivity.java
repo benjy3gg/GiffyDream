@@ -1,4 +1,4 @@
-package com.benjy3gg.giphydream;
+package com.benjy3gg.giffydream;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

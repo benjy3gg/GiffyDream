@@ -1,4 +1,4 @@
-package com.benjy3gg.giphydream;
+package com.benjy3gg.giffydream;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,9 +15,9 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.benjy3gg.giphydream.responses.GifSingle;
-import com.benjy3gg.giphydream.service.GifDownloader;
-import com.benjy3gg.giphydream.service.GiphyService;
+import com.benjy3gg.giffydream.responses.GifSingle;
+import com.benjy3gg.giffydream.service.GifDownloader;
+import com.benjy3gg.giffydream.service.GiphyService;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,6 +1,5 @@
-package com.benjy3gg.giphydream.responses;
+package com.benjy3gg.giffydream.responses;
 
-import java.sql.Array;
 import java.util.ArrayList;
 
 /**

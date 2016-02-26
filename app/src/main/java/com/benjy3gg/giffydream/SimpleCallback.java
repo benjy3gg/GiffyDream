@@ -1,6 +1,6 @@
-package com.benjy3gg.giphydream;
+package com.benjy3gg.giffydream;
 
-import com.benjy3gg.giphydream.responses.GifSingle;
+import com.benjy3gg.giffydream.responses.GifSingle;
 
 /**
  * Created by benjy3gg on 20.02.2016.
